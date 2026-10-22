@@ -18,6 +18,15 @@ The game will include seed-based randomisation to change room accessibility, ite
 - Seed-based randomisation
 - Run timer
 
+## Current Progress
+
+- Created a basic office environment with walls, floor and desks.
+- Implemented first-person movement, mouse look, gravity, and collison detection.
+- Implemented raycast-based object detection.
+- Created a reusable interaction system using the IInteractable interface.
+- Added E-Key interaction for objects.
+- Added a crosshair and interaction prompt UI.
+
 ## Technologies
 
 - Unity 6
@@ -26,4 +35,4 @@ The game will include seed-based randomisation to change room accessibility, ite
 
 ## Development Status
 
-The project is currently in early development.
+The project is currently in early development. Basic player controls and object interaction have been implemented. More gameplay features will be added in future development sprints.
