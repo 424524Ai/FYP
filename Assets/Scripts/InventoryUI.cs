@@ -9,6 +9,10 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private PlayerLook playerLook;
     [SerializeField] private PlayerInteraction playerInteraction;
 
+    [SerializeField] private Inventory playerInventory;
+    [SerializeField] private InventorySlotUI slotPrefab;
+    [SerializeField] private Transform slotContainer;
+
     private bool isOpen = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,6 +41,8 @@ public class InventoryUI : MonoBehaviour
 
         if (isOpen)
         {
+
+            RefreshInventory();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -44,6 +50,24 @@ public class InventoryUI : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+        }
+    }
+
+    private void RefreshInventory()
+    {
+        Debug.Log("Inventory item count: " + playerInventory.Items.Count);
+        // Remove previously generated slots
+        foreach (Transform child in slotContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        // create a slot for each collected item
+        foreach(ItemData item in playerInventory.Items)
+        {
+            InventorySlotUI slot = Instantiate(
+                slotPrefab, slotContainer);
+
+            slot.SetItem(item);
         }
     }
 }
