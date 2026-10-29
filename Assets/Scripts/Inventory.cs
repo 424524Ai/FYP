@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Inventory : MonoBehaviour
 {
     private List<ItemData> items = new List<ItemData>();
+    public IReadOnlyList<ItemData> Items => items;
 
     public void AddItem(ItemData item)
     {
