@@ -15,4 +15,4 @@ MonoBehaviour:
   itemId: access_card
   itemName: Access Card
   description: An access card used to unlock the office exit.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: dadb7e828beee414bbb82c4dd21fad91, type: 3}
