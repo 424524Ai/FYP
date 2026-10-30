@@ -55,3 +55,7 @@ The game will include seed-based randomisation to change room accessibility, ite
 The project is in active development. First-person movement, object interaction, item collection, and basic inventory management have been implemented.
 
 The next development stage will focus on inventory item selection and 3D item inspection, followed by puzzle mechanics and further development of the office environment.
+
+## Documentation
+
+- [Game Design Document (GDD)](docs/GDD.md)
