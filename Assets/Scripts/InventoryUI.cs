@@ -17,6 +17,9 @@ public class InventoryUI : MonoBehaviour
     private readonly InventorySlotUI[] slots = new InventorySlotUI[Inventory.Capacity];
     private float messageUntil;
 
+    // Inspection can block selection without hiding the hotbar or stopping feedback.
+    public bool SelectionInputEnabled { get; set; } = true;
+
     private void OnEnable()
     {
         if (playerInventory == null) return;
@@ -49,7 +52,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Update()
     {
-        if (Mouse.current != null)
+        if (SelectionInputEnabled && Mouse.current != null)
         {
             float scroll = Mouse.current.scroll.ReadValue().y;
             // One step per input frame, independent of device-specific wheel units.
