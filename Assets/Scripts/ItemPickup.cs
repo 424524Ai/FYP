@@ -14,10 +14,11 @@ public class ItemPickup : MonoBehaviour, IInteractable
             return;
         }
 
-        playerInventory.AddItem(itemData);
+        if (!playerInventory.TryAddItem(itemData)) return;
 
         Debug.Log("Picked up: " + itemData.itemName);
 
         Destroy(gameObject);
     }
 }
+
