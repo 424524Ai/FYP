@@ -393,6 +393,7 @@ GameObject:
   - component: {fileID: 178637637}
   - component: {fileID: 178637636}
   - component: {fileID: 178637635}
+  - component: {fileID: 178637640}
   m_Layer: 0
   m_Name: AccessCardObject
   m_TagString: Untagged
@@ -507,6 +508,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &178637640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178637634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 548a0073771332a4daac416bab7070cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollectibleOutlineTarget
+  targetRenderer: {fileID: 178637637}
 --- !u!1 &203844586
 GameObject:
   m_ObjectHideFlags: 0
