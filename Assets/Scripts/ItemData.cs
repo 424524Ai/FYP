@@ -11,4 +11,7 @@ public class ItemData : ScriptableObject
     public string description;
 
     public Sprite icon;
+
+    [Tooltip("Visual-only prefab used by item inspection; no gameplay components.")]
+    public GameObject inspectionPrefab;
 }
