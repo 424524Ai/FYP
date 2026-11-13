@@ -1,73 +1,79 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
-// controls the visibility of the inventory UI
 public class InventoryUI : MonoBehaviour
 {
     [SerializeField] private GameObject inventoryPanel;
+    // Preserve serialized references from the previous modal inventory.
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerLook playerLook;
     [SerializeField] private PlayerInteraction playerInteraction;
-
     [SerializeField] private Inventory playerInventory;
     [SerializeField] private InventorySlotUI slotPrefab;
     [SerializeField] private Transform slotContainer;
+    [SerializeField] private TMP_Text inventoryFullMessage;
 
-    private bool isOpen = false;
+    private readonly InventorySlotUI[] slots = new InventorySlotUI[Inventory.Capacity];
+    private float messageUntil;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnEnable()
     {
-        inventoryPanel.SetActive(false);
+        if (playerInventory == null) return;
+        playerInventory.Changed += RefreshInventory;
+        playerInventory.InventoryFull += ShowInventoryFull;
+        RefreshInventory();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        if(Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame)
-        {
-            ToggleInventory();
-        }
+        if (playerInventory == null) return;
+        playerInventory.Changed -= RefreshInventory;
+        playerInventory.InventoryFull -= ShowInventoryFull;
     }
 
-    private void ToggleInventory()
+    private void Start()
     {
-        isOpen = !isOpen;
-        inventoryPanel.SetActive(isOpen);
-
-        playerMovement.enabled = !isOpen;
-        playerLook.enabled = !isOpen;
-        playerInteraction.enabled = !isOpen;
-
-        if (isOpen)
+        if (inventoryPanel == null || playerInventory == null || slotPrefab == null || slotContainer == null)
         {
+            Debug.LogError("Hotbar references are missing.", this);
+            enabled = false;
+            return;
+        }
+        inventoryPanel.SetActive(true);
+        for (int i = 0; i < slots.Length; i++)
+            slots[i] = Instantiate(slotPrefab, slotContainer);
+        if (inventoryFullMessage != null) inventoryFullMessage.gameObject.SetActive(false);
+        RefreshInventory();
+    }
 
-            RefreshInventory();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
+    private void Update()
+    {
+        if (Mouse.current != null)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            float scroll = Mouse.current.scroll.ReadValue().y;
+            // One step per input frame, independent of device-specific wheel units.
+            if (scroll != 0f) playerInventory.CycleSelection(scroll > 0f ? -1 : 1);
         }
+        if (inventoryFullMessage != null && inventoryFullMessage.gameObject.activeSelf && Time.unscaledTime >= messageUntil)
+            inventoryFullMessage.gameObject.SetActive(false);
     }
 
     private void RefreshInventory()
     {
-        Debug.Log("Inventory item count: " + playerInventory.Items.Count);
-        // Remove previously generated slots
-        foreach (Transform child in slotContainer)
+        for (int i = 0; i < slots.Length; i++)
         {
-            Destroy(child.gameObject);
+            if (slots[i] == null) continue;
+            slots[i].SetItem(i < playerInventory.Items.Count ? playerInventory.Items[i] : null);
+            slots[i].SetSelected(i == playerInventory.SelectedIndex);
         }
-        // create a slot for each collected item
-        foreach(ItemData item in playerInventory.Items)
-        {
-            InventorySlotUI slot = Instantiate(
-                slotPrefab, slotContainer);
+    }
 
-            slot.SetItem(item);
-        }
+    private void ShowInventoryFull()
+    {
+        if (inventoryFullMessage == null) return;
+        inventoryFullMessage.text = "Inventory Full";
+        inventoryFullMessage.gameObject.SetActive(true);
+        messageUntil = Time.unscaledTime + 2f;
     }
 }

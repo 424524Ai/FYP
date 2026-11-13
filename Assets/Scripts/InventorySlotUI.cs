@@ -2,28 +2,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Displays the data of an item in an inventory slot
 public class InventorySlotUI : MonoBehaviour
 {
     [SerializeField] private Image itemIcon;
     [SerializeField] private TMP_Text itemName;
+    [SerializeField] private GameObject selectionHighlight;
 
     public void SetItem(ItemData item)
     {
-        if(item == null)
-        {
-            return;
-        }
-        itemName.text = item.itemName;
+        itemName.text = item != null ? item.itemName : string.Empty;
+        itemIcon.sprite = item != null ? item.icon : null;
+        itemIcon.enabled = itemIcon.sprite != null;
+    }
 
-        if(item.icon != null)
-        {
-            itemIcon.sprite = item.icon;
-            itemIcon.enabled = true;
-        }
-        else
-        {
-            itemIcon.enabled = false;
-        }
+    public void SetSelected(bool selected)
+    {
+        if (selectionHighlight != null) selectionHighlight.SetActive(selected);
     }
 }
