@@ -1,7 +1,7 @@
 # Escape the Office
 ## Game Design Document (GDD)
 
-**Version:** 0.1 — Initial Draft  
+**Version:** 0.3 — Current Gameplay Controls and Development Status  
 **Project Type:** Final Year Project  
 **Platform:** PC  
 **Engine:** Unity 6  
@@ -49,46 +49,51 @@ To escape, the player must explore the workplace, uncover clues, solve puzzles, 
 
 ### Player Controls
 
-| Input | Action |
-|---|---|
-| W / A / S / D | Move |
-| Mouse | Look around |
-| E | Interact with objects or use selected items |
-| Tab | Open or close Inventory |
-| Left Mouse Button | Select items and interact with UI |
-| Mouse Drag | Rotate objects during 3D Inspection |
-| Esc | Close the current interface or open Pause Menu |
+| Input | Action | Status |
+|---|---|---|
+| W / A / S / D | Move | Implemented |
+| Mouse | Look around | Implemented |
+| E | Interact with objects or use the selected item | Implemented |
+| Mouse Wheel | Cycle through the six hotbar slots, including empty slots | Implemented |
+| F | Inspect the currently selected item | Implemented |
+| Left Mouse Button + Drag | Rotate the inspected 3D item | Implemented |
+| Esc | Exit item inspection; pause-menu behaviour is planned | Partially implemented |
 
-The Esc key is context-sensitive. When an interface is open, Esc closes that interface first. During normal gameplay, Esc opens the Pause Menu.
+The inventory is no longer opened with **Tab**. During normal gameplay, the six-slot hotbar remains visible. The planned Pause Menu will extend the context-sensitive Esc behaviour; it should not be described as implemented yet.
 
 ## 4. Inventory and Item Interaction
 
-Players can collect items and access them through an inventory interface.
+### Inventory and Hotbar
 
-Each collected item is displayed in an Inventory Slot containing its icon and name.
+Players collect items through the existing world interaction system. Collected items are stored in an inventory represented by an **always-visible, six-slot hotbar**.
 
-Clicking a slot displays two options:
-
-- **Select:** Sets the item as the currently selected item.
-- **Inspect:** Opens a 3D inspection view.
+- The mouse wheel changes the selected slot; selection can include empty slots.
+- The selected slot is visually highlighted.
+- Collected items are represented by their item data and icons.
+- The inventory enforces its capacity limit and provides independent feedback when full.
+- The earlier Tab-operated inventory panel and its clickable **Select / Inspect** options are no longer part of the current control design.
 
 ### Item Selection and Usage
 
-Selected items remain active after closing the inventory.
+The selected item remains active while the player explores the office. The player aims at an interactable object and presses **E** to interact or attempt to use the selected item.
 
-Players can aim at compatible objects and press E to attempt to use the selected item.
+The first implemented item-use example is the office exit:
 
-Most items remain in the inventory after successful use. Items specifically designated as consumable are removed when used successfully.
-
-Attempting to use an incompatible item displays a short text message without changing the puzzle state.
+- The exit door checks the **currently selected** item against its assigned Access Card asset; it does not search the other hotbar slots.
+- An empty or incompatible selection produces the message `Requires an access card`.
+- Selecting the Access Card and pressing E unlocks the door, hides its renderer, disables its blocking collider and displays `Door unlocked` for approximately two seconds.
+- The Access Card is **not consumed**, and the selected slot and highlight are preserved.
+- Other item-use interactions, including any consumable-item rules, remain planned rather than fully implemented.
 
 ### 3D Item Inspection
 
-Players will be able to examine selected items in a dedicated 3D inspection interface.
+Pressing **F** while an item is selected opens its 3D inspection view. The player can rotate the inspected object by dragging with the left mouse button, then press **Esc** to exit inspection.
 
-Items can be rotated to reveal hidden information, such as symbols, numbers, or clues on the back of an object.
+Inspection is separate from using the selected item on environmental objects. Future puzzle items may reveal symbols, numbers or other clues through inspection.
 
-Inspection is separate from selecting an item for environmental interaction.
+### Interactable Item Visibility
+
+Collectible items use a cyan, depth-aware outline to help players recognise objects they can pick up. The outline system is implemented, while broader scene-level visibility and occlusion regression testing remains ongoing.
 
 ## 5. Level Design
 
@@ -244,9 +249,9 @@ Starting a New Game creates a new randomised configuration.
 
 The planned user interface includes:
 
-- **Gameplay HUD:** Crosshair, interaction prompts, and timer.
-- **Inventory Panel:** Collected items, selection, and inspection options.
-- **3D Inspection Interface:** Rotatable item view.
+- **Gameplay HUD:** Crosshair and interaction prompts are implemented; timer remains planned.
+- **Six-Slot Hotbar (implemented):** Always-visible inventory slots, item icons and selected-slot highlight; mouse-wheel selection.
+- **3D Inspection Interface (implemented):** F to inspect, left-mouse drag to rotate, Esc to exit.
 - **Keypad Interface:** Numerical code entry and feedback.
 - **Computer Interface:** Login puzzle and information display.
 - **Pause Menu:** Resume, Restart, and navigation options.
@@ -300,29 +305,38 @@ These systems will be implemented and refined incrementally.
 
 ## 12. Development Status
 
+*Status snapshot: 20 November 2026. This section describes the current Unity implementation rather than the earlier GDD prototype.*
+
 ### Implemented
 
-- First-person movement and mouse look.
-- Character collision.
-- Raycast-based object interaction.
-- Contextual interaction prompts.
-- Item pickup.
-- Basic inventory storage.
-- Inventory panel opened with Tab.
-- Dynamically generated inventory slots.
-- Item icons and names.
+- First-person movement, mouse look, character collision and grounded movement.
+- Raycast-based interaction, E-key interaction and contextual prompts.
+- Item pickup and inventory storage with six-slot capacity handling.
+- Always-visible six-slot hotbar, mouse-wheel item selection and selection highlighting.
+- Item icons and associated item data.
+- F-key 3D item inspection, mouse-drag rotation and Esc to exit inspection.
+- Cyan depth-aware outlines for collectible items.
+- Selected-item use through the existing interaction system.
+- Access Card exit interaction: selected-card validation, door unlock, renderer/collider disabling and temporary success/rejection feedback.
+- Initial compilation, incremental code review and read-only QA checks for the Item Use System; nine core user-performed Play Mode observations reported as passing.
+
+### In Progress / Partially Verified
+
+- Regression and edge-case testing for item use, inspection, hotbar behaviour, outline occlusion and interaction boundaries.
+- Office scene layout and room content; the current exit interaction exists, but the full five-area office level is not yet complete.
+- Windows standalone build and end-to-end release verification.
 
 ### Planned
 
-- Inventory item selection.
-- 3D item inspection.
-- Using inventory items on environmental objects.
-- Office level construction.
-- Keypad and computer puzzles.
-- Seed-based randomisation.
-- Timer and Pause Menu.
-- Access Card retrieval and exit interaction.
-- Completion screen.
+- Locked drawers, keys, containers and connected clue progression.
+- Manager's Office keypad and computer puzzles.
+- Full five-area office environment and final puzzle content.
+- Seed-based randomisation and solvability validation.
+- Timer, Pause Menu, New Game / Restart and game-state reset.
+- Win-condition integration and Completion Screen.
+- Final UI styling, visual art direction, lighting, audio and external playtesting.
+
+The previous Tab-based inventory panel is **superseded** by the always-visible hotbar. The original GDD's description of item selection and inspection through a clickable inventory panel no longer represents the implemented controls.
 
 ## 13. Future Development
 
@@ -335,20 +349,74 @@ The following areas require further design or refinement:
 - Randomisation implementation and testing.
 - Final development scope and prioritisation.
 
-## 14. AI Usage Disclosure
+## 14. Development Sprint Plan (November 2026 – March 2027)
 
-Generative AI (ChatGPT by OpenAI) was used as a supporting tool during the planning and documentation of this project.
+### Schedule and delivery policy
 
-AI assistance was used to:
+- **Target full game completion / Feature Freeze:** **18 March 2027**.
+- **19–31 March 2027:** maintenance only: small bug fixes, minor UI/text/audio adjustments, performance improvements, documentation and submission preparation. No major new features, new rooms, substantial puzzle redesigns or architectural rewrites.
+- **Holiday development window:** **15 December 2026 – 17 January 2027**, with approximately **20–25 hours per week** available for a concentrated development sprint.
+- **Term-time planning allowance:** approximately **10 hours per week**. Hours are estimates and will be adjusted to actual coursework and progress.
+- **Feature Complete target:** **17 January 2027**. **Content Complete target:** **21 February 2027**. From **22 February**, prioritise testing, fixes and polish rather than adding features.
 
-- Brainstorm and discuss game design ideas, including gameplay mechanics, puzzle progression, and seed-based randomisation.
-- Organise the structure and content of the Game Design Document (GDD).
-- Improve the clarity, grammar, and presentation of the written documentation.
+### Weekly sprints
 
-The game's core concept, design decisions, and final direction were determined by the developer. AI-generated suggestions were reviewed and adapted rather than accepted automatically.
+| Sprint | Dates | Planned work | Definition of done |
+|---|---|---|---|
+| W0 | 20–22 Nov 2026 | Merge the Item Use System PR; reconcile GDD and development plan | Feature merged into `main`; next sprint scoped |
+| W1 | 23–29 Nov | Design the five-area office floor plan and build a navigable greybox | Player can navigate the planned accessible areas |
+| W2 | 30 Nov–6 Dec | Reusable locked drawer/container, key and item-based puzzle interactions | Key unlocks drawer and reveals a clue/item |
+| W3 | 7–13 Dec | Keypad UI, code validation and Manager's Office access | Correct code opens the office; incorrect code gives feedback |
+| Transition | 14 Dec | Stabilise scene and prepare holiday backlog | No known blocker to holiday integration |
+| W4 | 15–20 Dec | Computer login puzzle, clue-reading/inspection content and full fixed puzzle chain | First Playable: complete escape possible without debug intervention |
+| W5 | 21–27 Dec | Timer, pause, completion screen, New Game/Restart and state reset | Full start-to-finish and replay loop works |
+| W6 | 28 Dec–3 Jan | Seed generation/reproduction, random keypad codes and selected clue variations | Same seed reproduces matching puzzle data |
+| W7 | 4–10 Jan | Random Access Card container/location, final code and computer information; solvability tests | Multiple seeds can be completed without softlocks |
+| W8 | 11–17 Jan | Integration fixes, art direction, initial props/audio and first Windows Alpha Build | Feature Complete: core systems integrated and Alpha Build runs |
+| W9 | 18–24 Jan | Office furniture, materials and environmental assets | Five areas have recognisable visual identities |
+| W10 | 25–31 Jan | Lighting, atmosphere and material polish | Cohesive lighting; clues remain legible |
+| W11 | 1–7 Feb | Interaction sounds, ambience and feedback polish | Key interactions have clear audio/visual feedback |
+| W12 | 8–14 Feb | Consistent HUD, keypad, computer, pause and completion UI | UI navigation is clear and reliable |
+| W13 | 15–21 Feb | Puzzle pacing, guidance and first external playtests | Content Complete; feedback and issues recorded |
+| W14 | 22–28 Feb | High-priority bug fixes and end-to-end regression testing | Critical playthroughs pass |
+| W15 | 1–7 Mar | Release Candidate, performance checks and second external playtest | Standalone Windows candidate available |
+| W16 | 8–14 Mar | Remaining defects, balance, documentation and demonstration preparation | No known progression-blocking defects |
+| W17 | 15–18 Mar | Final regression tests, Windows Build and release sign-off | **Full game complete; Feature Freeze on 18 March** |
+| Maintenance | 19–31 Mar | Minor corrections, documentation and submission | No substantial feature or design changes |
 
-The developer remains responsible for the accuracy, implementation, and final content of the project.
+### Milestones
+
+| Target date | Milestone | Expected outcome |
+|---|---|---|
+| 13 Dec 2026 | Core Puzzle Foundation | Office greybox, drawer and keypad interactions |
+| 20 Dec 2026 | First Playable | Fixed puzzle chain can be completed |
+| 27 Dec 2026 | Complete Game Loop | Timer, pause, completion and restart work |
+| 10 Jan 2027 | Randomisation Complete | Reproducible seeds and valid puzzle configurations |
+| 17 Jan 2027 | Feature Complete | All core gameplay features integrated; Alpha Build |
+| 21 Feb 2027 | Content Complete | Environment, UI, audio and puzzle content ready |
+| 7 Mar 2027 | Release Candidate | Tested Windows build with major defects addressed |
+| **18 Mar 2027** | **Full Release / Feature Freeze** | **Complete game; only small changes thereafter** |
+
+### Sprint workflow and risk management
+
+Each feature follows a GitHub Issue and feature branch, implementation plan and developer approval, scoped Codex implementation (including Unity MCP where appropriate), incremental Code Review and QA assessment, developer-led Play Mode testing, development-log updates, then commit, pull request and merge. Review findings are assessed before any changes are made. Actual tests and unexecuted tests must be reported separately.
+
+Prioritise a complete, playable fixed puzzle chain before expanding seed-based variation. If a sprint slips, reduce optional visual content or randomisation breadth before sacrificing end-to-end testing. W8 is also an integration buffer. Progress and estimates will be reviewed weekly; this schedule is a plan, not a claim that future work has already been completed.
+
+## 15. AI Usage Disclosure
+
+Generative AI tools from OpenAI, including **ChatGPT** and **OpenAI Codex**, have been used to support the planning, documentation and development of *Escape the Office*.
+
+**ChatGPT** has assisted with brainstorming game mechanics and puzzle progression, structuring and refining the GDD, creating and revising the sprint plan, explaining implementation approaches, and reviewing development decisions. The developer evaluates suggestions and determines the game's requirements, scope and final direction.
+
+**OpenAI Codex** has been used as an AI-assisted software development agent. Under developer-defined requirements and approval checkpoints, Codex has inspected existing Unity/C# code, proposed implementation plans, written or modified gameplay scripts, and used **Unity MCP** to inspect and configure Unity scene objects and component references. For example, during the Item Use System feature, Codex implemented the selected Access Card check, locked-door interaction and temporary feedback UI, then configured the associated scene objects. This coding and scene-configuration work is attributed to AI assistance rather than represented as entirely hand-written by the developer.
+
+The development workflow also uses specialised **Code Reviewer** and **QA Tester** agents to assess changes and document findings. These assessments are not substitutes for actual gameplay testing: compilation checks, static/read-only checks, automated tests and developer-performed manual Play Mode tests are distinguished in feature logs. Agents do not independently approve final game behaviour or apply review recommendations without developer authorisation.
+
+The developer retains responsibility for defining requirements, choosing among proposed designs, approving implementation scope, manually testing gameplay, deciding whether results meet acceptance criteria, managing GitHub changes and accepting the final work. AI-generated code and recommendations are reviewed and may be revised or rejected. Relevant AI-assisted activities, limitations and verification evidence are recorded in feature-specific development logs and review/QA reports.
+
+This disclosure describes the development process to date and will be updated if the tools or their roles change. The developer remains accountable for the correctness, originality, attribution and final submission of the project.
 
 ---
 
-**Document Status:** Initial Draft — Subject to change throughout development.
+**Document Status:** Working GDD — Sprint plan approved on 20 November 2026; subject to controlled revision as development progresses.
