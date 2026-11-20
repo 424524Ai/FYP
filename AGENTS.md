@@ -50,14 +50,29 @@ Summarize:
 - Compilation, Console inspection, tests, gameplay checks, and code review results.
 - Checks not completed, remaining limitations, and any required follow-up.
 
-## Next planned feature: Six-Slot Hotbar
+## Code Review and QA agents
+
+- Code Review focuses on code correctness, maintainability, architecture, and regressions.
+- QA focuses on functional requirements, tests, edge cases, and gameplay verification.
+- Perform one explicitly approved initial baseline review per agent. Afterward, use incremental reviews based on approved changes and affected dependencies; do not automatically repeat a full-project review.
+- Both agents remain read-only by default. Do not edit files, scenes, assets, or settings, implement fixes, or perform mutating tool actions.
+- Read-only instructions do not replace sandbox enforcement. Use a read-only parent session and disable mutating external tools when enforcing read-only reviews.
+- Git inspection still requires explicit user approval. Review or agent-configuration approval alone does not authorize Git operations or a baseline review.
+- Report evidence and verification gaps. A read-only reviewer must not launch Unity, enter Play Mode, request compilation, or run checks that write project state without separate approval. Mark those checks as not performed and hand them off to an approved QA run.
+- Return Markdown reports to the parent agent. Saving reports requires explicit approval; the read-only agents do not save reports themselves.
+
+## Project status
+
+- Six-slot hotbar: completed.
+- Collectible outline: completed.
+- 3D item inspection: completed.
+
+The completed hotbar retains six fixed slots at the bottom center, mouse-wheel cycling through empty slots, a persistent selection highlight, safe full-inventory handling, and existing pickup functionality.
+
+## Next planned feature: Item Use System
 
 This is planned scope, not authorization to implement. Follow the inspection, planning, and explicit approval process above before starting.
 
-- Provide six fixed slots, always visible at the bottom center of the screen.
-- Mouse wheel input cycles through all six slots, including empty slots.
-- Give the selected slot a visible highlight and preserve its selection during normal gameplay.
-- Switching slots must not disable player movement or mouse look.
-- Reuse existing `Inventory`, `ItemData`, and `ItemPickup` functionality where practical.
-- Handle a full inventory safely without losing items.
-- Keep 3D item inspection and item usage outside this feature; they are separate future features.
+- Inspect the existing inventory, hotbar, inspection, pickup, and interaction systems before proposing item-use behavior.
+- Agree on the gameplay requirements and implementation scope before making changes.
+- Preserve the completed hotbar, collectible outline, and item inspection functionality.
