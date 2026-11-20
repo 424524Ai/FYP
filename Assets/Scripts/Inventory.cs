@@ -8,6 +8,8 @@ public class Inventory : MonoBehaviour
     private readonly List<ItemData> items = new List<ItemData>();
     public IReadOnlyList<ItemData> Items => items;
     public int SelectedIndex { get; private set; }
+    public ItemData SelectedItem =>
+        SelectedIndex >= 0 && SelectedIndex < items.Count ? items[SelectedIndex] : null;
     public event Action Changed;
     public event Action InventoryFull;
 
